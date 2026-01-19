@@ -157,7 +157,6 @@
 
             <el-switch
               v-model="row.isPaid"
-              :disabled="!row.endTime || row.isPaid"
               @change="updatePaymentStatus(row.id, row.isPaid)"
               style="margin-left: 10px"
             />
@@ -332,7 +331,7 @@ export default {
       } else if (statusFilter.value === 'paid') {
         reservations = reservations.filter((r) => r.isPaid)
       } else if (statusFilter.value === 'unpaid') {
-        reservations = reservations.filter((r) => !r.isPaid && r.endTime)
+        reservations = reservations.filter((r) => !r.isPaid)
       }
 
       return reservations

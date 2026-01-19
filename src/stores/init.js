@@ -9,10 +9,10 @@ export async function initializeStores() {
   try {
     // Загружаем данные параллельно для скорости
     await Promise.allSettled([
-      useOwnersStore().initialize(),
-      useCarsStore().initialize(),
-      useParkingSpotsStore().initialize(),
-      useReservationsStore().initialize(),
+      useOwnersStore().fetchOwners(),
+      useCarsStore().fetchCars(),
+      useParkingSpotsStore().fetchParkingSpots(),
+      useReservationsStore().fetchReservations(),
     ])
 
     console.log('Хранилища инициализированы')

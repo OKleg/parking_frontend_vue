@@ -142,9 +142,11 @@ export default {
 
     async function handleSearch() {
       if (searchQuery.value.trim()) {
+        ownersStore.searchQuery = searchQuery
         loading.value = true
         try {
           await ownersStore.searchOwnersByName(searchQuery.value)
+          ownersStore.filteredOwners = []
           // eslint-disable-next-line no-unused-vars
         } catch (err) {
           ElMessage.error('Ошибка при поиске')

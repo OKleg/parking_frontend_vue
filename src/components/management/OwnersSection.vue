@@ -168,6 +168,7 @@ export default {
       // } else {
       //   fetchOwners()
       // }
+      console.log('Display:', deleteOwner)
     }
 
     function editOwner(owner) {

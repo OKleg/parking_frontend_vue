@@ -147,7 +147,7 @@ export default {
 
       const query = searchQuery.value.toLowerCase().trim()
       return filterCars.filter(
-        (car) => car.fullName && car.licensePlate.toLowerCase().includes(query),
+        (car) => car.licensePlate && car.licensePlate.toLowerCase().includes(query),
       )
     })
     const rules = {
@@ -224,6 +224,15 @@ export default {
       // } else {
       //   fetchCars()
       // }
+      // console.log('Поиск:', searchQuery.value)
+      // console.log('Cars:', carsStore.cars)
+      // console.log('Display:', displayCars)
+      // console.log(
+      //   'Search:',
+      //   displayCars.value.filter(
+      //     (car) => car.licensePlate && car.licensePlate.toLowerCase().includes(searchQuery.value),
+      //   ),
+      // )
     }
 
     function editCar(car) {

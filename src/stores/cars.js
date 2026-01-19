@@ -7,8 +7,6 @@ export const useCarsStore = defineStore('cars', {
     currentCar: null,
     loading: false,
     error: null,
-    filteredCars: [],
-    searchQuery: '',
   }),
 
   actions: {
@@ -31,10 +29,6 @@ export const useCarsStore = defineStore('cars', {
       try {
         const response = await carApi.searchByLicensePlate(licensePlate)
         this.cars = response.data
-        if (!licensePlate || licensePlate.trim() === '') {
-          this.filteredCars = response.data
-          return
-        }
       } catch (error) {
         this.error = error.message
       } finally {

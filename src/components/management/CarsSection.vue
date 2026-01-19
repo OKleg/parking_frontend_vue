@@ -22,17 +22,17 @@
     </div>
 
     <!-- Фильтр по владельцу -->
-    <div v-if="selectedOwner" class="owner-filter">
+    <!--<div v-if="selectedOwner" class="owner-filter">
       <el-tag type="info" closable @close="clearOwnerFilter">
         <el-icon><UserIcon /></el-icon>
         Автомобили владельца: {{ selectedOwner.name }}
       </el-tag>
-    </div>
+    </div>-->
 
     <!-- Таблица автомобилей -->
     <el-table
       v-loading="loading"
-      :data="cars"
+      :data="displayCars"
       style="width: 100%"
       stripe
       empty-text="Автомобили не найдены"
@@ -100,14 +100,14 @@
 </template>
 
 <script>
-import { ref, reactive, onMounted, onUnmounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   Search as SearchIcon,
   Plus as PlusIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
-  User as UserIcon,
+  //User as UserIcon,
 } from '@element-plus/icons-vue'
 import { useCarsStore } from '@/stores/cars'
 import { useOwnersStore } from '@/stores/owners'
@@ -120,7 +120,7 @@ export default {
     PlusIcon,
     EditIcon,
     DeleteIcon,
-    UserIcon,
+    //UserIcon,
   },
   setup() {
     const carsStore = useCarsStore()
@@ -138,7 +138,18 @@ export default {
       licensePlate: '',
       ownerId: null,
     })
+    const displayCars = computed(() => {
+      const filterCars = carsStore.cars || []
 
+      if (!searchQuery.value || searchQuery.value.trim() === '') {
+        return filterCars
+      }
+
+      const query = searchQuery.value.toLowerCase().trim()
+      return filterCars.filter(
+        (car) => car.fullName && car.licensePlate.toLowerCase().includes(query),
+      )
+    })
     const rules = {
       licensePlate: [
         { required: true, message: 'Введите номер авто', trigger: 'blur' },
@@ -152,18 +163,18 @@ export default {
       fetchCars()
 
       // Слушаем события выбора владельца
-      window.addEventListener('owner-selected', handleOwnerSelected)
+      // window.addEventListener('owner-selected', handleOwnerSelected)
     })
 
-    onUnmounted(() => {
-      window.removeEventListener('owner-selected', handleOwnerSelected)
-    })
+    // onUnmounted(() => {
+    //   window.removeEventListener('owner-selected', handleOwnerSelected)
+    // })
 
-    function handleOwnerSelected(event) {
-      const { ownerId, ownerName } = event.detail
-      selectedOwner.value = { id: ownerId, name: ownerName }
-      filterCarsByOwner(ownerId)
-    }
+    // function handleOwnerSelected(event) {
+    //   const { ownerId, ownerName } = event.detail
+    //   selectedOwner.value = { id: ownerId, name: ownerName }
+    //   filterCarsByOwner(ownerId)
+    // }
 
     async function loadOwners() {
       try {
@@ -186,33 +197,33 @@ export default {
       }
     }
 
-    async function filterCarsByOwner(ownerId) {
-      loading.value = true
-      try {
-        await carsStore.fetchCars()
-        carsStore.cars = carsStore.cars.filter((car) => car.ownerId === ownerId)
-        // eslint-disable-next-line no-unused-vars
-      } catch (err) {
-        ElMessage.error('Ошибка при фильтрации автомобилей')
-      } finally {
-        loading.value = false
-      }
-    }
+    // async function filterCarsByOwner(ownerId) {
+    //   loading.value = true
+    //   try {
+    //     await carsStore.fetchCars()
+    //     carsStore.cars = carsStore.cars.filter((car) => car.ownerId === ownerId)
+    //     // eslint-disable-next-line no-unused-vars
+    //   } catch (err) {
+    //     ElMessage.error('Ошибка при фильтрации автомобилей')
+    //   } finally {
+    //     loading.value = false
+    //   }
+    // }
 
     async function handleSearch() {
-      if (searchQuery.value.trim()) {
-        loading.value = true
-        try {
-          await carsStore.searchCarsByLicensePlate(searchQuery.value)
-          // eslint-disable-next-line no-unused-vars
-        } catch (err) {
-          ElMessage.error('Ошибка при поиске')
-        } finally {
-          loading.value = false
-        }
-      } else {
-        fetchCars()
-      }
+      // if (searchQuery.value.trim()) {
+      //   loading.value = true
+      //   try {
+      //     await carsStore.searchCarsByLicensePlate(searchQuery.value)
+      //     // eslint-disable-next-line no-unused-vars
+      //   } catch (err) {
+      //     ElMessage.error('Ошибка при поиске')
+      //   } finally {
+      //     loading.value = false
+      //   }
+      // } else {
+      //   fetchCars()
+      // }
     }
 
     function editCar(car) {
@@ -251,10 +262,10 @@ export default {
       window.dispatchEvent(event)
     }
 
-    function clearOwnerFilter() {
-      selectedOwner.value = null
-      fetchCars()
-    }
+    // function clearOwnerFilter() {
+    //   selectedOwner.value = null
+    //   fetchCars()
+    // }
 
     async function submitForm() {
       const valid = await formRef.value.validate()
@@ -302,13 +313,13 @@ export default {
       formRef,
       selectedOwner,
       owners: ownersStore.owners,
-      cars: carsStore.cars,
+      displayCars,
       fetchCars,
       handleSearch,
       editCar,
       deleteCar,
       createReservationForCar,
-      clearOwnerFilter,
+      //clearOwnerFilter,
       submitForm,
       resetForm,
       formatDate,

@@ -7,35 +7,10 @@ export const useOwnersStore = defineStore('owners', {
     currentOwner: null,
     loading: false,
     error: null,
-    _initialized: false,
-    filteredOwners: [],
-    searchQuery: '',
   }),
-  // getters: {
-  //   // Геттер для текущих отображаемых данных
-  //   displayOwners: (state) => {
-  //     return state.searchQuery ? state.filteredOwners : state.owners
-  //   },
-  // },
-  actions: {
-    async initialize() {
-      if (this._initialized) return
 
-      this.loading = true
-      try {
-        const response = await ownerApi.getAll()
-        this.owners = response.data
-        this._initialized = true
-      } catch (err) {
-        this.error = err.message
-      } finally {
-        this.loading = false
-      }
-    },
+  actions: {
     async fetchOwners() {
-      if (this._initialized && this.owners.length > 0) {
-        return
-      }
       this.loading = true
       try {
         const response = await ownerApi.getAll()
@@ -57,25 +32,6 @@ export const useOwnersStore = defineStore('owners', {
       } finally {
         this.loading = false
       }
-    },
-
-    searchOwners(query) {
-      this.searchQuery = query
-
-      if (!query || query.trim() === '') {
-        this.filteredOwners = [...this.owners]
-        return
-      }
-
-      const searchTerm = query.toLowerCase().trim()
-      this.filteredOwners = this.owners.filter(
-        (owner) => owner.fullName && owner.fullName.toLowerCase().includes(searchTerm),
-      )
-    },
-
-    resetSearch() {
-      this.searchQuery = ''
-      this.filteredOwners = [...this.owners]
     },
 
     async createOwner(owner) {

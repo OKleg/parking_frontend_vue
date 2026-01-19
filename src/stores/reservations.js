@@ -11,7 +11,7 @@ export const useReservationsStore = defineStore('reservations', {
   }),
 
   getters: {
-    activeReservations: (state) => state.reservations.filter((r) => !r.endTime),
+    activeateReservations: (state) => state.reservations.filter((r) => !r.endTime),
     completedReservations: (state) => state.reservations.filter((r) => r.endTime),
   },
 

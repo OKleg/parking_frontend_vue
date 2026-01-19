@@ -1,6 +1,6 @@
 <template>
   <div class="owners-section">
-    <div v-if="loading && owners.length === 0" class="section-loading">
+    <div v-if="loading && displayOwners.length === 0" class="section-loading">
       <el-icon class="loading-icon"><Loading /></el-icon>
       <span>Загрузка владельцев...</span>
     </div>
@@ -28,7 +28,7 @@
     <!-- Таблица владельцев -->
     <el-table
       v-loading="loading"
-      :data="owners"
+      :data="displayOwners"
       style="width: 100%"
       stripe
       empty-text="Владельцы не найдены"
@@ -84,7 +84,7 @@
 </template>
 
 <script>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   Search as SearchIcon,
@@ -124,6 +124,19 @@ export default {
       ],
     }
 
+    const displayOwners = computed(() => {
+      const filterOwners = ownersStore.owners || []
+
+      if (!searchQuery.value || searchQuery.value.trim() === '') {
+        return filterOwners
+      }
+
+      const query = searchQuery.value.toLowerCase().trim()
+      return filterOwners.filter(
+        (owner) => owner.fullName && owner.fullName.toLowerCase().includes(query),
+      )
+    })
+
     onMounted(() => {
       fetchOwners()
     })
@@ -141,21 +154,20 @@ export default {
     }
 
     async function handleSearch() {
-      if (searchQuery.value.trim()) {
-        ownersStore.searchQuery = searchQuery
-        loading.value = true
-        try {
-          await ownersStore.searchOwnersByName(searchQuery.value)
-          ownersStore.filteredOwners = []
-          // eslint-disable-next-line no-unused-vars
-        } catch (err) {
-          ElMessage.error('Ошибка при поиске')
-        } finally {
-          loading.value = false
-        }
-      } else {
-        fetchOwners()
-      }
+      // if (searchQuery.value.trim()) {
+      //   loading.value = true
+      //   try {
+      //     await ownersStore.searchOwnersByName(searchQuery.value)
+      //     ownersStore.filteredOwners = []
+      //     // eslint-disable-next-line no-unused-vars
+      //   } catch (err) {
+      //     ElMessage.error('Ошибка при поиске')
+      //   } finally {
+      //     loading.value = false
+      //   }
+      // } else {
+      //   fetchOwners()
+      // }
     }
 
     function editOwner(owner) {
@@ -223,7 +235,7 @@ export default {
       form,
       rules,
       formRef,
-      owners: ownersStore.owners,
+      displayOwners, //ownersStore.owners,
       fetchOwners,
       handleSearch,
       editOwner,
